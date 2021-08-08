@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   
+
+  <!-- copied from posenet  -->
+  <head>
+
+     <title>Similarity, Browserify and Cosine Test</title>
+    <!-- Load TensorFlow.js
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    Load Posenet
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/posenet-similarity/dist/posenet-similarity.min.js"></script>
+
+
+
+    
+    <style>
+      .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        color: black;
+      }
+
+      .footer-text {
+        max-width: 600px;
+        text-align: center;
+        margin: auto;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .footer-text,
+        .dg {
+          display: none;
+        }
+      }
+
+      /*
+         *  The following loading spinner CSS is from SpinKit project
+         *  https://github.com/tobiasahlin/SpinKit
+         */
+      .sk-spinner-pulse {
+        width: 20px;
+        height: 20px;
+        margin: auto 10px;
+        float: left;
+        background-color: #333;
+        border-radius: 100%;
+        -webkit-animation: sk-pulseScaleOut 1s infinite ease-in-out;
+        animation: sk-pulseScaleOut 1s infinite ease-in-out;
+      }
+
+      @-webkit-keyframes sk-pulseScaleOut {
+        0% {
+          -webkit-transform: scale(0);
+          transform: scale(0);
+        }
+
+        100% {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+          opacity: 0;
+        }
+      }
+
+      @keyframes sk-pulseScaleOut {
+        0% {
+          -webkit-transform: scale(0);
+          transform: scale(0);
+        }
+
+        100% {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+          opacity: 0;
+        }
+      }
+
+      .spinner-text {
+        float: left;
+      }
+
+      div.static{
+        position: relative;
+        right: 100px;
+      }
+
+  
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+
+  <body>
+    <div id="info" style="display: none"></div>
+    <div id="loading" style="display: flex">
+      <div class="spinner-text">Loading PoseNet model...</div>
+      <div class="sk-spinner sk-spinner-pulse"></div>
+    </div>
+    <div id="main" style="display: none">
+      <video id="video" playsinline style="display:none "></video>
+      <canvas id="output">
+    </div>
+    <div>
+      <img
+      src="/Users/ulfaoctaviani/Documents/QueenMary/posenetmultipose/imagepose/1start.png"
+      alt="startpose"
+      style="
+        width: 20%;
+        height: 50%;
+        margin-right: 100px;
+        top: 10%;
+        right: 300px;
+        position: absolute; 
+      "
+      class="ImageSlides"
+    />  
+    </div>    
+
+    <div class="footer">
+      <div class="footer-text">
+        <p></p>
+        <div id="myDiv01">...</div>
+      </div>
+    </div>
+
+    <!-- test to show UI-->
+    <div id="text1" class="relative">
+      <p>
+        <script>
+          function myFunction(text1) {
+            return 'model right elbow angle is ' + text1;
+            // return 'model right elbow angle is ' + modelRS;
+          }
+        </script>
+      </p>
+    </div>
+
+    <!-- input ID text for user % similarity values from JS
+    
+    Needs to be layout-ed -->
+
+    <div class="userTarget">
+      <p id="value1" style="position: absolute; right:100px; top: 30px"></p>
+      <p id="value2" style="position: absolute; right:100px; top: 50px"></p>
+      <p id="value3" style="position: absolute; right:100px; top: 70px"></p>
+      <p id="value4" style="position: absolute; right:100px; top: 90px"></p>
+    </div>
+
+    
+ <!-- Find out how to get value without being hardcoded
+
+    <div> 
+      <ul>
+        <li> Target right elbow angle is </li>
+        <li></li>
+      </ul>
+      -->
+      
+    </div>
+
+    <div class="absolute">
+
+
+  
+
+
+      <img class="ImageSlides" src="/Users/ulfaoctaviani/Documents/QueenMary/posenetmultipose/imagepose/2rightdown.png" style="width: 300px;
+      height: 300px;
+      margin-right: 100px;
+      top: 10%;
+      right: 100 px;" >
+
+
+<img class="ImageSlides" src="/Users/ulfaoctaviani/Documents/QueenMary/posenetmultipose/imagepose/3rightup.png" style="width: 300px;
+height: 300px;
+margin-right: 100px;
+top: 10%;
+right: 100 px;" >
+
+<img class="ImageSlides" src="/Users/ulfaoctaviani/Documents/QueenMary/posenetmultipose/imagepose/4rightstomach.png" style="width: 300px;
+height: 300px;
+margin-right: 100px;
+top: 10%;
+right: 100 px;" >
+
+<img class="ImageSlides" src="/Users/ulfaoctaviani/Documents/QueenMary/posenetmultipose/imagepose/5leftdown.png" style="width: 300px;
+height: 300px;
+margin-right: 100px;
+top: 10%;
+right: 100 px;" >
+
+<img class="ImageSlides" src="/Users/ulfaoctaviani/Documents/QueenMary/posenetmultipose/imagepose/6leftup.png" style="width: 300px;
+height: 300px;
+margin-right: 100px;
+top: 10%;
+right: 100 px;" >
+
+<img class="ImageSlides" src="/Users/ulfaoctaviani/Documents/QueenMary/posenetmultipose/imagepose/7leftstomach.png" style="width: 300px;
+height: 300px;
+margin-right: 100px;
+top: 10%;
+right: 100 px;" >
+
+<img class="ImageSlides" src="/Users/ulfaoctaviani/Documents/QueenMary/posenetmultipose/imagepose/8rightchest.png" style="width: 300px;
+height: 300px;
+margin-right: 100px;
+top: 10%;
+right: 100 px;" >
+
+<img class="ImageSlides" src="/Users/ulfaoctaviani/Documents/QueenMary/posenetmultipose/imagepose/9rightshoulder.png" style="width: 300px;
+height: 300px;
+margin-right: 100px;
+top: 10%;
+right: 100 px;" >
+
+<img class="ImageSlides" src="/Users/ulfaoctaviani/Documents/QueenMary/posenetmultipose/imagepose/10rightdown2.png" style="width: 300px;
+height: 300px;
+margin-right: 100px;
+top: 10%;
+right: 100 px;" >
+
+<img class="ImageSlides" src="/Users/ulfaoctaviani/Documents/QueenMary/posenetmultipose/imagepose/11leftchest.png" style="width: 300px;
+height: 300px;
+margin-right: 100px;
+top: 10%;
+right: 100 px;" >
+
+<img class="ImageSlides" src="/Users/ulfaoctaviani/Documents/QueenMary/posenetmultipose/imagepose/12leftshoulder.png" style="width: 300px;
+height: 300px;
+margin-right: 100px;
+top: 10%;
+right: 100 px;" >
+
+<img class="ImageSlides" src="/Users/ulfaoctaviani/Documents/QueenMary/posenetmultipose/imagepose/13leftdown2.png" style="width: 300px;
+height: 300px;
+margin-right: 100px;
+top: 10%;
+right: 100 px;" >
+
+
+<img class="ImageSlides" src="/Users/ulfaoctaviani/Documents/QueenMary/posenetmultipose/imagepose/end.png" style="width: 300px;
+height: 300px;
+margin-right: 100px;
+top: 10%;
+right: 100 px;" >
+
+
+
+
+<script>
+  var myIndex = 0;
+  carousel();
+  
+  function carousel() {
+    var i;
+    var x = document.getElementsByClassName("ImageSlides");
+    for (i = 0; i < x.length; i++) {
+      x[i].style.display = "none";  
+    }
+    myIndex++;
+    if (myIndex > x.length) {myIndex = 1}    
+    x[myIndex-1].style.display = "block";  
+    setTimeout(carousel, 5000); // Change image every 2 seconds
+  }
+  </script>
+    </div>
+
+ 
+
+   
+    <!-- add image from webcam-->
+    <div id="console"></div>
+    <video autoplay playsinline muted id="webcam"></video>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script> -->
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet@2.2.1"></script>
+
+    <!-- Load posenet-similarity -->
+    <script src="https://cdn.jsdelivr.net/npm/posenet-similarity/dist/posenet-similarity.min.js"></script>
+    <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"> </script>
+    
+    <!-- Adds the WASM backend to the global backend registry 
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@2.0.0/dist/tf-backend-wasm.js"></script> -->
+    
+    <script src="demo_utils.js"></script>
+    <script src="index.js"></script>
+
+
+
+
+
+
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Similarity, Browserify and Babelify test</title>
+    <!-- Load TensorFlow.js
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    Load Posenet
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/posenet-similarity/dist/posenet-similarity.min.js"></script>
+
+    <script src="bundle.js"></script>
+    <p id="similarityPose1"></p>
+ 
+</html>
